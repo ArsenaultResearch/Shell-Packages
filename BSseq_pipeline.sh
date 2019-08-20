@@ -20,3 +20,31 @@ run_trimGalore G_pBL_1
 
 ## Check post-trimming fastqc reports. Might need to remove rRNA but probably unnecessary
 # If needed, check with Sam and he can provide a script that's usable for this. 
+
+
+### Prepare the genome for alignment
+
+## Program: Bismark
+module load Bismark/0.20.0-foss-2016b ## Update this when new version is updated
+module load Bowtie2/2.3.4.1-foss-2016b
+
+bismark_genome_preparation --path_to_aligner . --verbose /scratch/sva/Sinv_Methylation/genome/
+
+
+### Align the reads to the genome
+
+## Program Bismark
+module load Bismark/0.20.0-foss-2016b ## Update this when new version is updated
+module load Bowtie2/2.3.4.1-foss-2016b
+module load SAMtools/1.9-foss-2016b
+
+
+run_bismark () { ## Check Phred values in Fastqc
+bismark --genome /scratch/sva/Sinv_Methylation/genome/ --fastq --gzip --multicore 4 
+--output_dir /scratch/sva/Sinv_Methylation/analyses/bismark_aln 
+--temp_dir /scratch/sva/Sinv_Methylation/analyses/bismark_temp 
+--basename $1
+-1 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R1.fq.gz -2 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R2.fq.gz
+}
+
+run_trimGalore G_pBL_1
