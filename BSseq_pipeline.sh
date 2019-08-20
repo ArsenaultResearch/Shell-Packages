@@ -25,10 +25,10 @@ run_trimGalore G_pBL_1
 ### Prepare the genome for alignment
 
 ## Program: Bismark
-module load Bismark/0.20.0-foss-2016b ## Update this when new version is updated
+module load Bismark/0.22.1-foss-2016b
 module load Bowtie2/2.3.4.1-foss-2016b
 
-bismark_genome_preparation --path_to_aligner . --verbose /scratch/sva/Sinv_Methylation/genome/
+bismark_genome_preparation --verbose /scratch/sva/Sinv_Methylation/genome/
 
 
 ### Align the reads to the genome
@@ -40,11 +40,15 @@ module load SAMtools/1.9-foss-2016b
 
 
 run_bismark () { ## Check Phred values in Fastqc
-bismark --genome /scratch/sva/Sinv_Methylation/genome/ --fastq --gzip --multicore 4 
---output_dir /scratch/sva/Sinv_Methylation/analyses/bismark_aln 
---temp_dir /scratch/sva/Sinv_Methylation/analyses/bismark_temp 
---basename $1
--1 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R1.fq.gz -2 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R2.fq.gz
+bismark --genome /scratch/sva/Sinv_Methylation/genome/ --fastq --gzip --multicore 4 --output_dir /scratch/sva/Sinv_Methylation/analyses/bismark_aln --temp_dir /scratch/sva/Sinv_Methylation/analyses/bismark_temp --basename $1 -1 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R1_trimmed.fq.gz -2 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R2_trimmed.fq.gz
+deduplicate_bismark
+bismark_methylation_extractor 
 }
 
-run_trimGalore G_pBL_1
+### Generate Reports from the bismark outputs
+## Program: Bismark
+run_bismark_reporting () { 
+bismark2report
+bismark2summary
+}
+run_bismark G_pBL_1
