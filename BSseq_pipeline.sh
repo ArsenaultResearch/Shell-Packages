@@ -34,14 +34,14 @@ bismark_genome_preparation --verbose /scratch/sva/Sinv_Methylation/genome/
 ### Align the reads to the genome
 
 ## Program Bismark
-module load Bismark/0.20.0-foss-2016b ## Update this when new version is updated
+module load Bismark/0.22.1-foss-2016b
 module load Bowtie2/2.3.4.1-foss-2016b
 module load SAMtools/1.9-foss-2016b
 
 
-run_bismark () { ## Check Phred values in Fastqc
-bismark --genome /scratch/sva/Sinv_Methylation/genome/ --fastq --gzip --multicore 4 --output_dir /scratch/sva/Sinv_Methylation/analyses/bismark_aln --temp_dir /scratch/sva/Sinv_Methylation/analyses/bismark_temp --basename $1 -1 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R1_trimmed.fq.gz -2 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R2_trimmed.fq.gz
-deduplicate_bismark
+run_bismark () { 
+bismark --genome /scratch/sva/Sinv_Methylation/genome/ --fastq --gzip --sam --output_dir /scratch/sva/Sinv_Methylation/analyses/bismark_aln --temp_dir /scratch/sva/Sinv_Methylation/analyses/bismark_temp --basename $1 -1 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R1_val_1.fq.gz -2 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R2_val_2.fq.gz
+deduplicate_bismark $1_pe.sam
 bismark_methylation_extractor 
 }
 
@@ -51,4 +51,4 @@ run_bismark_reporting () {
 bismark2report
 bismark2summary
 }
-run_bismark G_pBL_1
+run_bismark_reporting
