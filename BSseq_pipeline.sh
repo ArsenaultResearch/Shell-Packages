@@ -40,10 +40,12 @@ module load SAMtools/1.9-foss-2016b
 
 
 run_bismark () { 
-bismark --genome /scratch/sva/Sinv_Methylation/genome/ --fastq --gzip --sam --output_dir /scratch/sva/Sinv_Methylation/analyses/bismark_aln --temp_dir /scratch/sva/Sinv_Methylation/analyses/bismark_temp --basename $1 -1 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R1_val_1.fq.gz -2 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R2_val_2.fq.gz
-deduplicate_bismark $1_pe.sam
-bismark_methylation_extractor 
+bismark --multicore 3 --genome /scratch/sva/Sinv_Methylation/genome/ --fastq --gzip --output_dir /scratch/sva/Sinv_Methylation/analyses/bismark_aln --temp_dir /scratch/sva/Sinv_Methylation/analyses/bismark_temp -1 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R1_val_1.fq.gz -2 /scratch/sva/Sinv_Methylation/analyses/trimmed_reads/$1_R2_val_2.fq.gz
+deduplicate_bismark --bam -p $1_R1_val_1_bismark_bt2_pe.bam
+bismark_methylation_extractor --paired-end --CX --cytosine_report --genome_folder /scratch/sva/Sinv_Methylation/genome/ $1_R1_val_1_bismark_bt2_pe.deduplicated.bam
 }
+## Note: run this on a 9-core run. Bismark mentioned that they require 3 cores for every 1 value in multicore. 
+## --multicore is incompatible with --basename at the moment which is slightly inconvenient but may change in the near future. 
 
 ### Generate Reports from the bismark outputs
 ## Program: Bismark
